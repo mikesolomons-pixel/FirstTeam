@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@theme {
+  /* Steel Blue — primary */
+  --color-steel-50: #f0f5fa;
+  --color-steel-100: #dce8f3;
+  --color-steel-200: #b9d1e7;
+  --color-steel-300: #8db4d6;
+  --color-steel-400: #6096c2;
+  --color-steel-500: #3b6b9e;
+  --color-steel-600: #2f5680;
+  --color-steel-700: #274567;
+  --color-steel-800: #233a56;
+  --color-steel-900: #1e3249;
+  --color-steel-950: #141f30;
+
+  /* Ember Orange — accent */
+  --color-ember-50: #fff7ed;
+  --color-ember-100: #ffedd5;
+  --color-ember-200: #fed7aa;
+  --color-ember-300: #fdba74;
+  --color-ember-400: #f59e42;
+  --color-ember-500: #e8722a;
+  --color-ember-600: #d45a1a;
+  --color-ember-700: #b04417;
+  --color-ember-800: #8c3619;
+  --color-ember-900: #732e18;
+  --color-ember-950: #3e150a;
+
+  /* Forge Green — success */
+  --color-forge-50: #f0fdf4;
+  --color-forge-100: #dcfce7;
+  --color-forge-200: #bbf7d0;
+  --color-forge-300: #86efac;
+  --color-forge-400: #4ade80;
+  --color-forge-500: #4a9e6b;
+  --color-forge-600: #3d8259;
+  --color-forge-700: #326b49;
+  --color-forge-800: #2b573d;
+  --color-forge-900: #254a34;
+  --color-forge-950: #12261b;
+
+  /* Warm grays — surface */
+  --color-warm-50: #fafaf9;
+  --color-warm-100: #f5f5f3;
+  --color-warm-200: #e7e5e2;
+  --color-warm-300: #d6d3cd;
+  --color-warm-400: #a8a29e;
+  --color-warm-500: #78716c;
+  --color-warm-600: #57534e;
+  --color-warm-700: #44403c;
+  --color-warm-800: #292524;
+  --color-warm-900: #1c1917;
+  --color-warm-950: #0c0a09;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-warm-200);
+  }
+}
+
+body {
+  background-color: var(--color-warm-50);
+  color: var(--color-warm-900);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-warm-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-warm-400);
+}
+
+/* Sticky note shadow */
+.sticky-shadow {
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Subtle pulse for presence dots */
+@keyframes presence-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.presence-dot {
+  animation: presence-pulse 2s ease-in-out infinite;
+}
+
+/* Toast slide-in */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.toast-enter {
+  animation: slide-in-right 0.3s ease-out;
+}
