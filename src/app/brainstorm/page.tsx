@@ -80,19 +80,23 @@ export default function BrainstormPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in-up">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-warm-900">Brainstorm</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <Lightbulb className="w-5 h-5 text-ember-500" />
+            <span className="text-sm font-medium text-ember-600">Brainstorm</span>
+          </div>
+          <h1 className="text-3xl font-bold text-warm-900">Think out loud, together</h1>
           <p className="text-warm-500 mt-1">
-            Drop ideas, build on each other, find the signal in the noise
+            Drop ideas, build on each other, find the signal in the noise.
           </p>
         </div>
         <Button
           variant="accent"
           onClick={() => setModalOpen(true)}
-          className="self-start"
+          className="self-start glow-ember"
         >
           <Plus className="w-4 h-4" />
           Start a Session

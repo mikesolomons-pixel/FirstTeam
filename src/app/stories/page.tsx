@@ -104,21 +104,25 @@ export default function StoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in-up">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <div className="flex items-center gap-2 mb-1">
+            <BookOpen className="w-5 h-5 text-forge-500" />
+            <span className="text-sm font-medium text-forge-600">Stories</span>
+          </div>
           <h1 className="text-3xl font-bold text-warm-900">
-            Stories &amp; Best Practices
+            Wins, lessons &amp; best practices
           </h1>
           <p className="text-warm-500 mt-1">
-            Share wins, lessons, and what works &mdash; from every plant
+            Share what works &mdash; from every plant, for every plant.
           </p>
         </div>
         <Button
           variant="accent"
           onClick={() => setModalOpen(true)}
-          className="self-start"
+          className="self-start glow-ember"
         >
           <Plus className="w-4 h-4" />
           Share a Story

@@ -10,6 +10,8 @@ import {
   MessageSquare,
   Newspaper,
   Users,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
@@ -130,35 +132,50 @@ function DashboardContent() {
     }
   };
 
+  const firstName = user?.full_name?.split(" ")[0] ?? "there";
+
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-warm-900">The Floor</h1>
-        <p className="text-warm-500 mt-1">
-          What&apos;s happening across the team
-        </p>
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-steel-800 via-steel-900 to-steel-950 px-8 py-8 text-white">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-ember-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-steel-400/10 rounded-full blur-3xl translate-y-1/2" />
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-1">
+            <Zap className="w-5 h-5 text-ember-400" />
+            <span className="text-sm text-steel-300 font-medium">The Floor</span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome back, {firstName}
+          </h1>
+          <p className="text-steel-300 mt-2 max-w-lg">
+            Here&apos;s what&apos;s happening across the team today. Jump in, raise a challenge, or celebrate a win.
+          </p>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
         <Link href="/challenges">
           <Card
             hover
-            className="group cursor-pointer hover:border-ember-300 transition-all"
+            className="group cursor-pointer border-transparent bg-gradient-to-br from-white to-steel-50 hover:shadow-lg hover:shadow-steel-200/50 transition-all duration-200"
           >
-            <CardContent className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warm-100 group-hover:bg-ember-100 flex items-center justify-center transition-colors">
-                <Target className="w-5 h-5 text-warm-500 group-hover:text-ember-600 transition-colors" />
+            <CardContent className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-steel-500 to-steel-700 flex items-center justify-center shadow-lg shadow-steel-500/20 group-hover:scale-105 transition-transform duration-200">
+                <Target className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-warm-900 text-sm">
+                <p className="font-semibold text-warm-900">
                   Raise a Challenge
                 </p>
                 <p className="text-xs text-warm-500">
                   Flag a problem to tackle together
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-warm-300 ml-auto group-hover:text-steel-500 group-hover:translate-x-1 transition-all" />
             </CardContent>
           </Card>
         </Link>
@@ -166,20 +183,21 @@ function DashboardContent() {
         <Link href="/stories">
           <Card
             hover
-            className="group cursor-pointer hover:border-ember-300 transition-all"
+            className="group cursor-pointer border-transparent bg-gradient-to-br from-white to-forge-50 hover:shadow-lg hover:shadow-forge-200/50 transition-all duration-200"
           >
-            <CardContent className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warm-100 group-hover:bg-ember-100 flex items-center justify-center transition-colors">
-                <Trophy className="w-5 h-5 text-warm-500 group-hover:text-ember-600 transition-colors" />
+            <CardContent className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-forge-500 to-forge-700 flex items-center justify-center shadow-lg shadow-forge-500/20 group-hover:scale-105 transition-transform duration-200">
+                <Trophy className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-warm-900 text-sm">
+                <p className="font-semibold text-warm-900">
                   Share a Win
                 </p>
                 <p className="text-xs text-warm-500">
                   Celebrate a success story
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-warm-300 ml-auto group-hover:text-forge-500 group-hover:translate-x-1 transition-all" />
             </CardContent>
           </Card>
         </Link>
@@ -187,65 +205,69 @@ function DashboardContent() {
         <Link href="/brainstorm">
           <Card
             hover
-            className="group cursor-pointer hover:border-ember-300 transition-all"
+            className="group cursor-pointer border-transparent bg-gradient-to-br from-white to-ember-50 hover:shadow-lg hover:shadow-ember-200/50 transition-all duration-200"
           >
-            <CardContent className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warm-100 group-hover:bg-ember-100 flex items-center justify-center transition-colors">
-                <Lightbulb className="w-5 h-5 text-warm-500 group-hover:text-ember-600 transition-colors" />
+            <CardContent className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-ember-500 to-ember-700 flex items-center justify-center shadow-lg shadow-ember-500/20 group-hover:scale-105 transition-transform duration-200">
+                <Lightbulb className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-warm-900 text-sm">
+                <p className="font-semibold text-warm-900">
                   Drop an Idea
                 </p>
                 <p className="text-xs text-warm-500">
                   Start or join a brainstorm
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-warm-300 ml-auto group-hover:text-ember-500 group-hover:translate-x-1 transition-all" />
             </CardContent>
           </Card>
         </Link>
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="flex items-center gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-steel-400 to-steel-600" />
+          <CardContent className="flex items-center gap-4 pt-5">
             <div className="w-12 h-12 rounded-xl bg-steel-100 flex items-center justify-center">
               <Target className="w-6 h-6 text-steel-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-warm-900">
+              <p className="text-3xl font-bold text-warm-900">
                 {openChallengesCount}
               </p>
-              <p className="text-xs text-warm-500">Open Challenges</p>
+              <p className="text-xs text-warm-500 font-medium">Open Challenges</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="flex items-center gap-4">
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forge-400 to-forge-600" />
+          <CardContent className="flex items-center gap-4 pt-5">
             <div className="w-12 h-12 rounded-xl bg-forge-100 flex items-center justify-center">
               <BookOpen className="w-6 h-6 text-forge-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-warm-900">
+              <p className="text-3xl font-bold text-warm-900">
                 {storiesThisMonth}
               </p>
-              <p className="text-xs text-warm-500">Stories This Month</p>
+              <p className="text-xs text-warm-500 font-medium">Stories This Month</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="flex items-center gap-4">
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-ember-400 to-ember-600" />
+          <CardContent className="flex items-center gap-4 pt-5">
             <div className="w-12 h-12 rounded-xl bg-ember-100 flex items-center justify-center">
               <Lightbulb className="w-6 h-6 text-ember-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-warm-900">
+              <p className="text-3xl font-bold text-warm-900">
                 {activeBrainstorms}
               </p>
-              <p className="text-xs text-warm-500">Active Brainstorms</p>
+              <p className="text-xs text-warm-500 font-medium">Active Brainstorms</p>
             </div>
           </CardContent>
         </Card>
@@ -259,11 +281,15 @@ function DashboardContent() {
             Latest Activity
           </h2>
           {recentActivity.length === 0 ? (
-            <Card>
-              <CardContent className="text-center py-12">
-                <p className="text-warm-500 text-sm">
-                  No activity yet. Be the first to raise a challenge or share a
-                  story!
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 pattern-grid opacity-40" />
+              <CardContent className="relative text-center py-16">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-steel-100 to-warm-100 flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-steel-400" />
+                </div>
+                <p className="font-semibold text-warm-800 mb-1">No activity yet</p>
+                <p className="text-warm-500 text-sm max-w-sm mx-auto">
+                  Be the first to raise a challenge or share a story!
                 </p>
               </CardContent>
             </Card>

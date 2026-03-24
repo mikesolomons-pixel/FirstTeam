@@ -4,7 +4,12 @@ export interface Profile {
   avatar_url: string | null;
   plant_name: string;
   role: string;
+  is_admin: boolean;
   joined_at: string;
+}
+
+export interface AdminUser extends Profile {
+  email: string;
 }
 
 export type ChallengeStatus = "open" | "in_progress" | "resolved";

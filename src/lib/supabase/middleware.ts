@@ -52,6 +52,21 @@ export async function updateSession(request: NextRequest) {
       redirectUrl.pathname = "/";
       return NextResponse.redirect(redirectUrl);
     }
+
+    // Protect admin routes — check is_admin flag
+    const isAdminRoute = path.startsWith("/admin");
+    if (user && isAdminRoute) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .single();
+      if (!profile?.is_admin) {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = "/";
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
   }
 
   return supabaseResponse;
