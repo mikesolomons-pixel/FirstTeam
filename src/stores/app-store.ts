@@ -5,6 +5,10 @@ interface AppState {
   // Auth
   user: Profile | null;
   setUser: (user: Profile | null) => void;
+  authLoading: boolean;
+  setAuthLoading: (loading: boolean) => void;
+  authInitialized: boolean;
+  setAuthInitialized: (initialized: boolean) => void;
 
   // Presence
   onlineUsers: PresenceUser[];
@@ -29,6 +33,10 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
+  authLoading: true,
+  setAuthLoading: (loading) => set({ authLoading: loading }),
+  authInitialized: false,
+  setAuthInitialized: (initialized) => set({ authInitialized: initialized }),
 
   onlineUsers: [],
   setOnlineUsers: (users) => set({ onlineUsers: users }),
