@@ -13,6 +13,8 @@ import {
   ArrowRight,
   Zap,
   Award,
+  TrendingUp,
+  Flame,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
@@ -310,78 +312,154 @@ function DashboardContent() {
         ) : null}
       </div>
 
+      {/* Most Active Section */}
+      <div className="px-8 pt-6">
+        <h2 className="text-lg font-semibold text-warm-900 flex items-center gap-2 mb-4">
+          <Flame className="w-5 h-5 text-ember-500" />
+          Most Active
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Top Challenges */}
+          {challenges
+            .filter((c) => c.status === "open")
+            .sort((a, b) => (b.comment_count ?? 0) - (a.comment_count ?? 0))
+            .slice(0, 2)
+            .map((c) => (
+              <Link key={c.id} href={`/challenges`}>
+                <Card hover className="group cursor-pointer h-full border-l-4 border-l-steel-500">
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Target className="w-3.5 h-3.5 text-steel-500" />
+                      <span className="text-[10px] font-medium text-steel-500 uppercase tracking-wide">Challenge</span>
+                    </div>
+                    <p className="text-sm font-medium text-warm-900 line-clamp-2 group-hover:text-steel-600 transition-colors">
+                      {c.title}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      {c.author && (
+                        <span className="text-[10px] text-warm-500">{c.author.full_name}</span>
+                      )}
+                      {(c.comment_count ?? 0) > 0 && (
+                        <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
+                          <MessageSquare className="w-3 h-3" />
+                          {c.comment_count}
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+
+          {/* Top Stories */}
+          {stories
+            .sort((a, b) => (b.comment_count ?? 0) - (a.comment_count ?? 0))
+            .slice(0, 2)
+            .map((s) => (
+              <Link key={s.id} href={`/stories`}>
+                <Card hover className="group cursor-pointer h-full border-l-4 border-l-forge-500">
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <BookOpen className="w-3.5 h-3.5 text-forge-500" />
+                      <span className="text-[10px] font-medium text-forge-500 uppercase tracking-wide">Story</span>
+                    </div>
+                    <p className="text-sm font-medium text-warm-900 line-clamp-2 group-hover:text-forge-600 transition-colors">
+                      {s.title}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      {s.author && (
+                        <span className="text-[10px] text-warm-500">{s.author.full_name}</span>
+                      )}
+                      {(s.comment_count ?? 0) > 0 && (
+                        <span className="text-[10px] text-warm-400 flex items-center gap-0.5">
+                          <MessageSquare className="w-3 h-3" />
+                          {s.comment_count}
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+
+          {/* Top News */}
+          {newsItems
+            .slice(0, 2)
+            .map((n) => (
+              <Link key={n.id} href={n.url || "/news"} target={n.url ? "_blank" : undefined}>
+                <Card hover className="group cursor-pointer h-full border-l-4 border-l-ember-500">
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Newspaper className="w-3.5 h-3.5 text-ember-500" />
+                      <span className="text-[10px] font-medium text-ember-500 uppercase tracking-wide">News</span>
+                    </div>
+                    <p className="text-sm font-medium text-warm-900 line-clamp-2 group-hover:text-ember-600 transition-colors">
+                      {n.title}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      {n.author && (
+                        <span className="text-[10px] text-warm-500">{n.author.full_name}</span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+        </div>
+      </div>
+
       {/* Main Content Area */}
       <div className="px-8 pt-6 pb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Latest Activity Feed */}
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-semibold text-warm-900">
+        {/* Latest Activity Feed — Compact */}
+        <div className="lg:col-span-2 space-y-3">
+          <h2 className="text-sm font-semibold text-warm-500 uppercase tracking-wider">
             Latest Activity
           </h2>
           {recentActivity.length === 0 ? (
-            <Card className="relative overflow-hidden">
-              <div className="absolute inset-0 pattern-grid opacity-40" />
-              <CardContent className="relative text-center py-16">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-steel-100 to-warm-100 flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-8 h-8 text-steel-400" />
-                </div>
-                <p className="font-semibold text-warm-800 mb-1">No activity yet</p>
-                <p className="text-warm-500 text-sm max-w-sm mx-auto">
-                  Be the first to raise a challenge or share a story!
-                </p>
+            <Card>
+              <CardContent className="text-center py-8">
+                <Zap className="w-8 h-8 text-warm-200 mx-auto mb-2" />
+                <p className="text-warm-500 text-sm">No activity yet</p>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3">
-              {recentActivity.map((item) => (
-                <Card key={item.id} hover>
-                  <CardContent className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      {item.author ? (
-                        <Avatar
-                          name={item.author.full_name}
-                          src={item.author.avatar_url}
-                          size="sm"
-                        />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-warm-200" />
-                      )}
+            <Card>
+              <div className="divide-y divide-warm-100">
+                {recentActivity.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-warm-50/50 transition-colors">
+                    <div className="flex-shrink-0">
+                      {activityIcon(item.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-sm text-warm-900">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-warm-700 truncate">
                           {item.author?.full_name ?? "Unknown"}
                         </span>
-                        {item.author?.plant_name && (
-                          <Badge variant="outline" className="text-[10px]">
-                            {item.author.plant_name}
-                          </Badge>
-                        )}
-                        <span className="text-warm-400 text-xs flex items-center gap-1">
-                          {activityIcon(item.type)}
+                        <span className="text-[10px] text-warm-400">
                           {item.action}
                         </span>
                       </div>
                       <Link
                         href={item.link}
-                        className="text-sm text-steel-600 hover:text-steel-800 hover:underline font-medium mt-0.5 block truncate"
+                        className="text-xs text-steel-600 hover:text-steel-800 hover:underline truncate block"
                       >
                         {item.title}
                       </Link>
-                      <p className="text-xs text-warm-400 mt-1">
-                        {timeAgo(item.created_at)}
-                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    <span className="text-[10px] text-warm-400 flex-shrink-0 whitespace-nowrap">
+                      {timeAgo(item.created_at)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </Card>
           )}
         </div>
 
         {/* Who's Here Sidebar */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-warm-900 flex items-center gap-2">
-            <Users className="w-5 h-5 text-warm-400" />
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-warm-500 uppercase tracking-wider flex items-center gap-2">
+            <Users className="w-4 h-4" />
             Who&apos;s Here
           </h2>
           <Card>
