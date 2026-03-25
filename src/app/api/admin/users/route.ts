@@ -46,20 +46,19 @@ export async function GET() {
       );
     }
 
-    // Get auth users for email addresses
-    const { data: authData, error: authError } =
-      await service.auth.admin.listUsers({ perPage: 1000 });
-
-    if (authError) {
-      return NextResponse.json(
-        { error: `Auth error: ${authError.message}` },
-        { status: 500 }
-      );
+    // Try to get emails via listUsers, but gracefully fallback if it fails
+    let emailMap = new Map<string, string>();
+    try {
+      const { data: authData, error: authError } =
+        await service.auth.admin.listUsers({ perPage: 1000 });
+      if (!authError && authData?.users) {
+        emailMap = new Map(
+          authData.users.map((u) => [u.id, u.email ?? ""])
+        );
+      }
+    } catch {
+      // listUsers can fail with direct-SQL-created users — continue without emails
     }
-
-    const emailMap = new Map(
-      authData.users.map((u) => [u.id, u.email ?? ""])
-    );
 
     const users = (profiles ?? []).map((p) => ({
       ...p,
