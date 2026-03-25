@@ -2,6 +2,22 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
+// Web Speech API types (not in all TS libs)
+interface SpeechRecognitionType extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SpeechRecognitionEvent = any;
+
 interface UseSpeechReturn {
   isListening: boolean;
   transcript: string;
@@ -18,22 +34,24 @@ export function useSpeech(): UseSpeechReturn {
   const [transcript, setTranscript] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [supported, setSupported] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionType | null>(null);
 
   useEffect(() => {
-    const SpeechRecognition =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognitionCtor =
       typeof window !== "undefined"
-        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
         : null;
-    setSupported(!!SpeechRecognition);
+    setSupported(!!SpeechRecognitionCtor);
 
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
+    if (SpeechRecognitionCtor) {
+      const recognition: SpeechRecognitionType = new SpeechRecognitionCtor();
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.lang = "en-US";
 
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onresult = (event: any) => {
         let final = "";
         let interim = "";
         for (let i = 0; i < event.results.length; i++) {
