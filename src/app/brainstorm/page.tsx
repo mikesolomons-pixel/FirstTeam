@@ -80,7 +80,7 @@ export default function BrainstormPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="p-6 md:p-8 space-y-6 animate-fade-in-up">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

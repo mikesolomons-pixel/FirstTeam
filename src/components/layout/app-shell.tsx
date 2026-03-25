@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <Sidebar />
       <TopBar />
-      <main className="md:pl-64 pb-20 md:pb-0 min-h-screen">{children}</main>
+      <main className="md:pl-64 pb-20 md:pb-0 min-h-screen bg-warm-50">{children}</main>
       <MobileNav />
       <ToastContainer />
       <AIAssistantPanel />

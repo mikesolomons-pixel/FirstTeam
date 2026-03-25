@@ -132,9 +132,9 @@ function DashboardContent() {
   const firstName = user?.full_name?.split(" ")[0] ?? "there";
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div className="animate-fade-in-up">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-steel-800 via-steel-900 to-steel-950 px-8 py-8 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-steel-800 via-steel-900 to-steel-950 px-8 py-8 text-white">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-ember-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-steel-400/10 rounded-full blur-3xl translate-y-1/2" />
@@ -154,7 +154,7 @@ function DashboardContent() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
+      <div className="px-8 pt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
         <Link href="/challenges">
           <Card
             hover
@@ -223,7 +223,7 @@ function DashboardContent() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
+      <div className="px-8 pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-steel-400 to-steel-600" />
           <CardContent className="flex items-center gap-4 pt-5">
@@ -271,7 +271,7 @@ function DashboardContent() {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="px-8 pt-6 pb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Latest Activity Feed */}
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-warm-900">

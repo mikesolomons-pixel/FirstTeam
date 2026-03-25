@@ -133,7 +133,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div className="p-6 md:p-8 space-y-8 animate-fade-in-up">
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-1">
