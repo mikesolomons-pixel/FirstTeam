@@ -13,6 +13,7 @@ import {
   X,
   Shield,
   Award,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -25,6 +26,7 @@ const NAV_LINKS = [
   { label: "Stories", href: "/stories", icon: BookOpen },
   { label: "News", href: "/news", icon: Newspaper },
   { label: "Brainstorm", href: "/brainstorm", icon: Lightbulb },
+  { label: "Practice", href: "/practice", icon: MessageCircle },
   { label: "Achievements", href: "/achievements", icon: Award },
 ] as const;
 

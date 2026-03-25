@@ -208,3 +208,47 @@ export interface PresenceUser {
   current_page?: string;
   online_at: string;
 }
+
+// Practice Communication
+export type PracticeRole =
+  | "senior_leader"
+  | "business_partner"
+  | "customer"
+  | "top_talent"
+  | "prospective_hire"
+  | "factory_floor_worker";
+
+export interface PracticeSession {
+  id: string;
+  user_id: string;
+  role: PracticeRole;
+  scenario_title: string;
+  scenario_prompt: string;
+  status: "active" | "completed";
+  feedback: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface PracticeMessage {
+  id: string;
+  session_id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+}
+
+export interface ScenarioTemplate {
+  title: string;
+  prompt: string;
+  systemContext: string;
+}
+
+export interface RoleDefinition {
+  key: PracticeRole;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
+  scenarios: ScenarioTemplate[];
+}
