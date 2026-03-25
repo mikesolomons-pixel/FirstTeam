@@ -1,24 +1,44 @@
 "use client";
 
-import { Suspense } from "react";
-import { Award, Trophy, Users, Zap } from "lucide-react";
+import { Suspense, useState, useEffect } from "react";
+import { Award, Trophy, Users, Zap, Heart, Search } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBadges, useLeaderboard } from "@/hooks/use-badges";
 import { getBadgeDef, ALL_BADGES } from "@/lib/badges";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { BadgeIcon } from "@/components/badges/badge-icon";
 import { BadgeShowcase } from "@/components/badges/badge-showcase";
+import { BadgeRow } from "@/components/badges/badge-row";
+import { AwardBadgeModal } from "@/components/badges/award-badge-modal";
 import { cn, timeAgo } from "@/lib/utils";
+import type { Profile } from "@/types";
 
 function AchievementsContent() {
   const { user, loading: authLoading } = useAuth();
-  const { badges: myBadges, loading: badgesLoading } = useBadges(
+  const { badges: myBadges, loading: badgesLoading, awardPeerBadge, fetchBadges } = useBadges(
     user?.id
   );
   const { entries, recentAwards, loading: leaderboardLoading } =
     useLeaderboard();
+  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
+  const [awardTarget, setAwardTarget] = useState<Profile | null>(null);
+  const [search, setSearch] = useState("");
+
+  // Fetch all profiles so we can recognize anyone, not just badge holders
+  useEffect(() => {
+    async function loadProfiles() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("full_name");
+      if (data) setAllProfiles(data as Profile[]);
+    }
+    loadProfiles();
+  }, []);
 
   if (authLoading) {
     return (
@@ -259,6 +279,97 @@ function AchievementsContent() {
           </Card>
         </div>
       </div>
+
+      {/* Recognize a Teammate */}
+      <div className="px-8 pt-2 pb-8">
+        <h2 className="text-lg font-semibold text-warm-900 mb-1 flex items-center gap-2">
+          <Heart className="w-5 h-5 text-ember-500" />
+          Recognize a Teammate
+        </h2>
+        <p className="text-sm text-warm-500 mb-4">
+          Select someone to award a peer recognition badge. They&apos;ll see it on their profile and the leaderboard.
+        </p>
+
+        {/* Search */}
+        <div className="relative max-w-sm mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-400" />
+          <input
+            type="text"
+            placeholder="Search teammates..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-warm-300 bg-white text-sm text-warm-900 focus:border-steel-400 focus:outline-none focus:ring-2 focus:ring-steel-400/20"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {allProfiles
+            .filter((p) => p.id !== user?.id)
+            .filter(
+              (p) =>
+                !search.trim() ||
+                p.full_name.toLowerCase().includes(search.toLowerCase()) ||
+                p.plant_name.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((profile) => {
+              const entry = entries.find((e) => e.user_id === profile.id);
+              return (
+                <button
+                  key={profile.id}
+                  onClick={() => setAwardTarget(profile)}
+                  className="flex items-center gap-3 p-4 rounded-xl border border-warm-200 bg-white hover:border-ember-300 hover:shadow-md hover:shadow-ember-100/50 transition-all cursor-pointer text-left group"
+                >
+                  <Avatar
+                    name={profile.full_name}
+                    src={profile.avatar_url}
+                    size="md"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-warm-900 truncate group-hover:text-ember-700">
+                      {profile.full_name}
+                    </p>
+                    <p className="text-xs text-warm-500 truncate">
+                      {profile.plant_name}
+                    </p>
+                    {entry && (
+                      <div className="flex items-center gap-1 mt-1">
+                        {entry.badge_keys.slice(0, 3).map((k) => (
+                          <BadgeIcon key={k} badgeKey={k} size="sm" />
+                        ))}
+                        {entry.badge_keys.length > 3 && (
+                          <span className="text-[10px] text-warm-400">
+                            +{entry.badge_keys.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <Award className="w-5 h-5 text-warm-300 group-hover:text-ember-500 transition-colors flex-shrink-0" />
+                </button>
+              );
+            })}
+        </div>
+      </div>
+
+      {/* Award Badge Modal */}
+      {awardTarget && (
+        <AwardBadgeModal
+          open={!!awardTarget}
+          onClose={() => setAwardTarget(null)}
+          targetUser={awardTarget}
+          onAward={async (badgeKey, note) => {
+            const result = await awardPeerBadge(
+              awardTarget.id,
+              badgeKey,
+              note
+            );
+            if (!result.error) {
+              await fetchBadges(user?.id);
+            }
+            return result;
+          }}
+        />
+      )}
     </div>
   );
 }
