@@ -10,7 +10,11 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      // If the next param points to reset-password, redirect there
+      const redirectTo = next.startsWith("/auth/reset-password")
+        ? `${origin}/auth/reset-password`
+        : `${origin}${next}`;
+      return NextResponse.redirect(redirectTo);
     }
   }
 
