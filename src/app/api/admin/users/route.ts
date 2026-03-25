@@ -25,41 +25,54 @@ function getServiceClient() {
 }
 
 export async function GET() {
-  const admin = await assertAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  try {
+    const admin = await assertAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const service = getServiceClient();
+
+    // Get all profiles
+    const { data: profiles, error: profilesError } = await service
+      .from("profiles")
+      .select("*")
+      .order("joined_at", { ascending: false });
+
+    if (profilesError) {
+      return NextResponse.json(
+        { error: `Profiles error: ${profilesError.message}` },
+        { status: 500 }
+      );
+    }
+
+    // Get auth users for email addresses
+    const { data: authData, error: authError } =
+      await service.auth.admin.listUsers({ perPage: 1000 });
+
+    if (authError) {
+      return NextResponse.json(
+        { error: `Auth error: ${authError.message}` },
+        { status: 500 }
+      );
+    }
+
+    const emailMap = new Map(
+      authData.users.map((u) => [u.id, u.email ?? ""])
+    );
+
+    const users = (profiles ?? []).map((p) => ({
+      ...p,
+      email: emailMap.get(p.id) ?? "",
+    }));
+
+    return NextResponse.json({ users });
+  } catch (err) {
+    return NextResponse.json(
+      { error: `Server error: ${err instanceof Error ? err.message : String(err)}` },
+      { status: 500 }
+    );
   }
-
-  const service = getServiceClient();
-
-  // Get all profiles
-  const { data: profiles, error: profilesError } = await service
-    .from("profiles")
-    .select("*")
-    .order("joined_at", { ascending: false });
-
-  if (profilesError) {
-    return NextResponse.json({ error: profilesError.message }, { status: 500 });
-  }
-
-  // Get auth users for email addresses
-  const { data: authData, error: authError } =
-    await service.auth.admin.listUsers({ perPage: 1000 });
-
-  if (authError) {
-    return NextResponse.json({ error: authError.message }, { status: 500 });
-  }
-
-  const emailMap = new Map(
-    authData.users.map((u) => [u.id, u.email ?? ""])
-  );
-
-  const users = (profiles ?? []).map((p) => ({
-    ...p,
-    email: emailMap.get(p.id) ?? "",
-  }));
-
-  return NextResponse.json({ users });
 }
 
 export async function DELETE(request: Request) {
