@@ -129,6 +129,36 @@ export interface Reaction {
 
 export type ReactionCounts = Partial<Record<ReactionEmoji, number>>;
 
+export type VoteSessionStatus = "active" | "closed";
+
+export interface ChallengeVoteSession {
+  id: string;
+  created_by: string | null;
+  title: string;
+  description: string;
+  status: VoteSessionStatus;
+  created_at: string;
+  closed_at: string | null;
+}
+
+export interface ChallengeVote {
+  id: string;
+  session_id: string;
+  user_id: string;
+  challenge_id: string;
+  points: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VoteResult {
+  challenge_id: string;
+  title: string;
+  total_points: number;
+  voter_count: number;
+  rank: number;
+}
+
 export interface AISummary {
   id: string;
   target_type: string;

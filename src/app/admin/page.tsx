@@ -11,9 +11,14 @@ import {
   ShieldOff,
   Factory,
   UserPlus,
+  Vote,
+  Play,
+  Square,
+  Trophy,
 } from "lucide-react";
 import { useAdmin } from "@/hooks/use-admin";
 import { useAuth } from "@/hooks/use-auth";
+import { useChallengeVote } from "@/hooks/use-challenge-vote";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,9 +49,22 @@ const PLANT_OPTIONS = [
 export default function AdminPage() {
   const { user } = useAuth();
   const { users, loading, updateUser, deleteUser } = useAdmin();
+  const {
+    activeSession,
+    tallies,
+    startVoteSession,
+    closeVoteSession,
+    loading: voteLoading,
+  } = useChallengeVote();
   const [search, setSearch] = useState("");
   const [editUser, setEditUser] = useState<AdminUser | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
+  const [showStartVote, setShowStartVote] = useState(false);
+  const [voteTitle, setVoteTitle] = useState("Priority Vote");
+  const [voteDesc, setVoteDesc] = useState(
+    "Rank the challenges that matter most to you."
+  );
+  const [voteSaving, setVoteSaving] = useState(false);
   const [editForm, setEditForm] = useState({
     full_name: "",
     plant_name: "",
@@ -188,6 +206,140 @@ export default function AdminPage() {
           </Card>
         ))}
       </div>
+
+      {/* Challenge Vote Management */}
+      <Card className="relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-ember-400 to-forge-500" />
+        <CardContent className="pt-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-ember-500 to-forge-600 flex items-center justify-center">
+                <Vote className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-warm-900">Challenge Priority Vote</h2>
+                <p className="text-xs text-warm-500">
+                  {activeSession
+                    ? `"${activeSession.title}" is live — users can vote on open challenges.`
+                    : "Start a vote to let the team rank open challenges by importance."}
+                </p>
+              </div>
+            </div>
+            <div>
+              {activeSession ? (
+                <Button
+                  variant="danger"
+                  onClick={async () => {
+                    setVoteSaving(true);
+                    await closeVoteSession();
+                    setVoteSaving(false);
+                  }}
+                  disabled={voteSaving}
+                >
+                  <Square className="w-4 h-4 mr-1.5" />
+                  {voteSaving ? "Closing..." : "End Vote"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setShowStartVote(true)}
+                >
+                  <Play className="w-4 h-4 mr-1.5" />
+                  Start a Vote
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Live results when vote is active */}
+          {activeSession && tallies.length > 0 && (
+            <div className="space-y-2 mt-4 pt-4 border-t border-warm-100">
+              <h3 className="text-sm font-medium text-warm-500 mb-3 flex items-center gap-2">
+                <Trophy className="w-4 h-4" />
+                Live Rankings
+              </h3>
+              {tallies.slice(0, 5).map((t, i) => {
+                const maxPts = tallies[0]?.total_points || 1;
+                return (
+                  <div
+                    key={t.challenge_id}
+                    className="flex items-center gap-3"
+                  >
+                    <span
+                      className={cn(
+                        "w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold flex-shrink-0",
+                        i === 0 && t.total_points > 0
+                          ? "bg-amber-400 text-white"
+                          : "bg-warm-100 text-warm-500"
+                      )}
+                    >
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-warm-800 truncate">
+                        {t.title}
+                      </p>
+                      <div className="mt-1 h-1 bg-warm-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-ember-500 rounded-full transition-all"
+                          style={{
+                            width: `${(t.total_points / maxPts) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-warm-700 tabular-nums">
+                      {t.total_points} pts
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Start Vote Modal */}
+      <Modal
+        open={showStartVote}
+        onClose={() => setShowStartVote(false)}
+        title="Start a Challenge Priority Vote"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-warm-600">
+            This will appear on everyone&apos;s homepage. Each team member gets 10
+            points to distribute across open challenges.
+          </p>
+          <Input
+            label="Vote Title"
+            value={voteTitle}
+            onChange={(e) => setVoteTitle(e.target.value)}
+            placeholder="e.g. Q2 Priority Vote"
+          />
+          <Input
+            label="Description"
+            value={voteDesc}
+            onChange={(e) => setVoteDesc(e.target.value)}
+            placeholder="What should people focus on?"
+          />
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="secondary" onClick={() => setShowStartVote(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                setVoteSaving(true);
+                await startVoteSession(voteTitle, voteDesc);
+                setVoteSaving(false);
+                setShowStartVote(false);
+              }}
+              disabled={voteSaving || !voteTitle.trim()}
+            >
+              {voteSaving ? "Starting..." : "Launch Vote"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Search & Table */}
       <Card>

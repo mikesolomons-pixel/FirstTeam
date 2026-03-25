@@ -23,6 +23,7 @@ import { useAppStore } from "@/stores/app-store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { VoteWidget } from "@/components/voting/vote-widget";
 import { cn, timeAgo } from "@/lib/utils";
 import type { Profile } from "@/types";
 
@@ -268,6 +269,11 @@ function DashboardContent() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Vote Widget (when active) */}
+      <div className="px-8 pt-6">
+        <VoteWidget />
       </div>
 
       {/* Main Content Area */}
