@@ -108,10 +108,7 @@ function DashboardContent() {
     return items.slice(0, 10);
   }, [challenges, stories, newsItems]);
 
-  const isLoading =
-    authLoading || challengesLoading || storiesLoading || newsLoading;
-
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="w-8 h-8 border-4 border-steel-200 border-t-steel-600 rounded-full animate-spin" />

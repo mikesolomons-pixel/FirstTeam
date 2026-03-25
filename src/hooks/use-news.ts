@@ -10,14 +10,19 @@ export function useNews() {
   const supabase = createClient();
 
   const fetchNews = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("news_items")
-      .select("*, author:profiles(*)")
-      .order("pinned", { ascending: false })
-      .order("created_at", { ascending: false });
-    if (data) setNewsItems(data as NewsItem[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from("news_items")
+        .select("*, author:profiles(*)")
+        .order("pinned", { ascending: false })
+        .order("created_at", { ascending: false });
+      if (data) setNewsItems(data as NewsItem[]);
+    } catch {
+      // table may not exist yet
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchNews(); }, [fetchNews]);

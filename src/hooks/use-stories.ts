@@ -10,13 +10,18 @@ export function useStories() {
   const supabase = createClient();
 
   const fetchStories = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("stories")
-      .select("*, author:profiles(*)")
-      .order("created_at", { ascending: false });
-    if (data) setStories(data as Story[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from("stories")
+        .select("*, author:profiles(*)")
+        .order("created_at", { ascending: false });
+      if (data) setStories(data as Story[]);
+    } catch {
+      // table may not exist yet
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchStories(); }, [fetchStories]);

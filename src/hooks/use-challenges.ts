@@ -10,13 +10,18 @@ export function useChallenges() {
   const supabase = createClient();
 
   const fetchChallenges = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("challenges")
-      .select("*, author:profiles(*)")
-      .order("created_at", { ascending: false });
-    if (data) setChallenges(data as Challenge[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from("challenges")
+        .select("*, author:profiles(*)")
+        .order("created_at", { ascending: false });
+      if (data) setChallenges(data as Challenge[]);
+    } catch {
+      // table may not exist yet
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchChallenges(); }, [fetchChallenges]);

@@ -11,13 +11,18 @@ export function useBrainstorm() {
   const supabase = createClient();
 
   const fetchSessions = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("brainstorm_sessions")
-      .select("*, author:profiles(*)")
-      .order("created_at", { ascending: false });
-    if (data) setSessions(data as BrainstormSession[]);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from("brainstorm_sessions")
+        .select("*, author:profiles(*)")
+        .order("created_at", { ascending: false });
+      if (data) setSessions(data as BrainstormSession[]);
+    } catch {
+      // table may not exist yet
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchSessions(); }, [fetchSessions]);

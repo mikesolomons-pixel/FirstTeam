@@ -12,16 +12,21 @@ export function useAuth() {
 
   useEffect(() => {
     async function getUser() {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", authUser.id)
-          .single();
-        if (profile) setUser(profile as Profile);
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", authUser.id)
+            .single();
+          if (profile) setUser(profile as Profile);
+        }
+      } catch {
+        // auth check failed
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     getUser();
 
