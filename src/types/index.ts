@@ -59,6 +59,7 @@ export interface NewsItem {
   author_id: string;
   title: string;
   url: string | null;
+  image_url: string | null;
   body: string;
   type: NewsType;
   pinned: boolean;

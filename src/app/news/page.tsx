@@ -51,6 +51,7 @@ export default function NewsPage() {
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newUrl, setNewUrl] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [newBody, setNewBody] = useState("");
   const [newType, setNewType] = useState<NewsType>("article");
   const [formError, setFormError] = useState("");
@@ -88,6 +89,7 @@ export default function NewsPage() {
       author_id: user.id,
       title: newTitle.trim(),
       url: newUrl.trim() || null,
+      image_url: newImageUrl.trim() || null,
       body: newBody.trim(),
       type: newType,
       pinned: false,
@@ -102,6 +104,7 @@ export default function NewsPage() {
 
     setNewTitle("");
     setNewUrl("");
+    setNewImageUrl("");
     setNewBody("");
     setNewType("article");
     setModalOpen(false);
@@ -117,12 +120,40 @@ export default function NewsPage() {
 
   const renderNewsCard = (item: NewsItem, isPinned: boolean = false) => {
     const TypeIcon = TYPE_ICONS[item.type] ?? FileText;
+    const hasImage = !!item.image_url;
+    const urlDomain = item.url
+      ? new URL(item.url).hostname.replace("www.", "")
+      : null;
+
     return (
       <Card
         key={item.id}
         hover
-        className={isPinned ? "bg-ember-50/50 border-ember-200" : ""}
+        className={`overflow-hidden ${isPinned ? "bg-ember-50/50 border-ember-200" : ""}`}
       >
+        {/* Preview image */}
+        {hasImage && (
+          <a
+            href={item.url || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block relative overflow-hidden bg-warm-100 group"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.image_url!}
+              alt={item.title}
+              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+            {urlDomain && (
+              <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium rounded">
+                {urlDomain}
+              </span>
+            )}
+          </a>
+        )}
+
         <CardContent className="space-y-3">
           {/* Type Badge + Pinned indicator */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -139,6 +170,9 @@ export default function NewsPage() {
                 <Pin className="w-3 h-3" />
                 Pinned
               </span>
+            )}
+            {!hasImage && urlDomain && (
+              <span className="text-[10px] text-warm-400">{urlDomain}</span>
             )}
           </div>
 
@@ -261,7 +295,7 @@ export default function NewsPage() {
           }
         />
       ) : (
-        <div className="space-y-6 max-w-3xl">
+        <div className="space-y-6">
           {/* Pinned Announcements */}
           {pinnedItems.length > 0 && (
             <div className="space-y-3">
@@ -269,7 +303,7 @@ export default function NewsPage() {
                 <Pin className="w-4 h-4" />
                 Pinned
               </h2>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {pinnedItems.map((item) => renderNewsCard(item, true))}
               </div>
             </div>
@@ -283,7 +317,7 @@ export default function NewsPage() {
                   Latest
                 </h2>
               )}
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {regularItems.map((item) => renderNewsCard(item, false))}
               </div>
             </div>
@@ -310,11 +344,18 @@ export default function NewsPage() {
             onChange={(e) => setNewTitle(e.target.value)}
           />
           <Input
-            label="URL (optional)"
+            label="Source URL (optional)"
             id="news-url"
             placeholder="https://..."
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
+          />
+          <Input
+            label="Preview Image URL (optional)"
+            id="news-image-url"
+            placeholder="https://...image.jpg"
+            value={newImageUrl}
+            onChange={(e) => setNewImageUrl(e.target.value)}
           />
           <Textarea
             label="Body"
