@@ -137,6 +137,7 @@ export interface ChallengeVoteSession {
   title: string;
   description: string;
   status: VoteSessionStatus;
+  show_on_floor: boolean;
   created_at: string;
   closed_at: string | null;
 }

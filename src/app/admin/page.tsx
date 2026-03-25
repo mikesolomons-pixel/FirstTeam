@@ -15,10 +15,15 @@ import {
   Play,
   Square,
   Trophy,
+  History,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { useAdmin } from "@/hooks/use-admin";
 import { useAuth } from "@/hooks/use-auth";
-import { useChallengeVote } from "@/hooks/use-challenge-vote";
+import { useChallengeVote, type VoteTally } from "@/hooks/use-challenge-vote";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,8 +57,11 @@ export default function AdminPage() {
   const {
     activeSession,
     tallies,
+    allSessions,
     startVoteSession,
     closeVoteSession,
+    toggleFloorVisibility,
+    getTalliesForSession,
     loading: voteLoading,
   } = useChallengeVote();
   const [search, setSearch] = useState("");
@@ -65,6 +73,8 @@ export default function AdminPage() {
     "Rank the challenges that matter most to you."
   );
   const [voteSaving, setVoteSaving] = useState(false);
+  const [expandedSession, setExpandedSession] = useState<string | null>(null);
+  const [sessionTallies, setSessionTallies] = useState<Record<string, VoteTally[]>>({});
   const [editForm, setEditForm] = useState({
     full_name: "",
     plant_name: "",
@@ -340,6 +350,106 @@ export default function AdminPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Vote History */}
+      {allSessions.filter((s) => s.status === "closed").length > 0 && (
+        <Card>
+          <CardContent>
+            <div className="flex items-center gap-3 mb-4">
+              <History className="w-5 h-5 text-warm-500" />
+              <h2 className="font-semibold text-warm-900">Vote History</h2>
+            </div>
+            <div className="space-y-2">
+              {allSessions
+                .filter((s) => s.status === "closed")
+                .map((session) => (
+                  <div key={session.id} className="border border-warm-200 rounded-lg overflow-hidden">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-warm-50/50">
+                      <button
+                        onClick={async () => {
+                          if (expandedSession === session.id) {
+                            setExpandedSession(null);
+                          } else {
+                            setExpandedSession(session.id);
+                            if (!sessionTallies[session.id]) {
+                              const t = await getTalliesForSession(session.id);
+                              setSessionTallies((prev) => ({ ...prev, [session.id]: t }));
+                            }
+                          }
+                        }}
+                        className="p-0.5 text-warm-400 hover:text-warm-600 cursor-pointer"
+                      >
+                        {expandedSession === session.id ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-warm-900">{session.title}</p>
+                        <p className="text-xs text-warm-500">
+                          Closed {session.closed_at ? new Date(session.closed_at).toLocaleDateString() : "—"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          setVoteSaving(true);
+                          await toggleFloorVisibility(session.id, !session.show_on_floor);
+                          setVoteSaving(false);
+                        }}
+                        disabled={voteSaving}
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border",
+                          session.show_on_floor
+                            ? "bg-forge-50 border-forge-300 text-forge-700 hover:bg-forge-100"
+                            : "bg-white border-warm-200 text-warm-500 hover:border-warm-300"
+                        )}
+                        title={session.show_on_floor ? "Results visible on The Floor" : "Results hidden from The Floor"}
+                      >
+                        {session.show_on_floor ? (
+                          <><Eye className="w-3.5 h-3.5" /> On Floor</>
+                        ) : (
+                          <><EyeOff className="w-3.5 h-3.5" /> Hidden</>
+                        )}
+                      </button>
+                    </div>
+                    {expandedSession === session.id && sessionTallies[session.id] && (
+                      <div className="px-4 py-3 space-y-2 border-t border-warm-100">
+                        {sessionTallies[session.id].length === 0 ? (
+                          <p className="text-warm-500 text-xs text-center py-2">No votes recorded</p>
+                        ) : (
+                          sessionTallies[session.id].map((t, i) => {
+                            const maxPts = sessionTallies[session.id][0]?.total_points || 1;
+                            return (
+                              <div key={t.challenge_id} className="flex items-center gap-3">
+                                <span className={cn(
+                                  "w-5 h-5 rounded text-[10px] font-bold flex items-center justify-center flex-shrink-0",
+                                  i === 0 && t.total_points > 0 ? "bg-amber-400 text-white" : "bg-warm-100 text-warm-500"
+                                )}>
+                                  {i + 1}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs text-warm-800 truncate">{t.title}</p>
+                                  <div className="mt-0.5 h-1 bg-warm-100 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full bg-ember-500 rounded-full"
+                                      style={{ width: `${(t.total_points / maxPts) * 100}%` }}
+                                    />
+                                  </div>
+                                </div>
+                                <span className="text-xs font-bold text-warm-600 tabular-nums">{t.total_points}</span>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search & Table */}
       <Card>

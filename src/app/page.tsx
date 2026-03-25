@@ -25,6 +25,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { VoteWidget } from "@/components/voting/vote-widget";
+import { useChallengeVote } from "@/hooks/use-challenge-vote";
 import { useBadges } from "@/hooks/use-badges";
 import { BadgeRow } from "@/components/badges/badge-row";
 import { cn, timeAgo } from "@/lib/utils";
@@ -48,6 +49,7 @@ function DashboardContent() {
   const { newsItems, loading: newsLoading } = useNews();
   const { sessions } = useBrainstorm();
   const { badges: myBadges, checkAndGrantActivityBadges } = useBadges(user?.id);
+  const { activeSession, floorSession, floorTallies } = useChallengeVote();
   const onlineUsers = useAppStore((s) => s.onlineUsers);
 
   // Auto-earn activity badges on dashboard load
@@ -299,9 +301,13 @@ function DashboardContent() {
         </Link>
       </div>
 
-      {/* Vote Widget (when active) */}
+      {/* Vote Widget — active vote OR floor-visible closed results */}
       <div className="px-8 pt-6">
-        <VoteWidget />
+        {activeSession ? (
+          <VoteWidget />
+        ) : floorSession ? (
+          <VoteWidget readOnlySession={floorSession} readOnlyTallies={floorTallies} />
+        ) : null}
       </div>
 
       {/* Main Content Area */}

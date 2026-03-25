@@ -10,13 +10,20 @@ import {
   Target,
   Flame,
 } from "lucide-react";
-import { useChallengeVote } from "@/hooks/use-challenge-vote";
+import { useChallengeVote, type VoteTally } from "@/hooks/use-challenge-vote";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
+import type { ChallengeVoteSession } from "@/types";
 
-export function VoteWidget() {
+interface VoteWidgetProps {
+  /** Pass a closed session + tallies for read-only results display */
+  readOnlySession?: ChallengeVoteSession;
+  readOnlyTallies?: VoteTally[];
+}
+
+export function VoteWidget({ readOnlySession, readOnlyTallies }: VoteWidgetProps = {}) {
   const {
     activeSession,
     challenges,
@@ -40,12 +47,16 @@ export function VoteWidget() {
   const localPointsUsed = Object.values(votes).reduce((a, b) => a + b, 0);
   const localPointsRemaining = totalPointsBudget - localPointsUsed;
 
-  const maxPoints = useMemo(() => {
-    if (tallies.length === 0) return 0;
-    return Math.max(...tallies.map((t) => t.total_points), 1);
-  }, [tallies]);
+  const isReadOnly = !!readOnlySession;
+  const displaySession = readOnlySession || activeSession;
+  const displayTallies = readOnlyTallies || tallies;
 
-  if (loading || !activeSession) return null;
+  const maxPoints = useMemo(() => {
+    if (displayTallies.length === 0) return 0;
+    return Math.max(...displayTallies.map((t) => t.total_points), 1);
+  }, [displayTallies]);
+
+  if (loading || !displaySession) return null;
 
   const addPoint = (challengeId: string) => {
     if (localPointsRemaining <= 0) return;
@@ -86,20 +97,25 @@ export function VoteWidget() {
             </div>
             <div>
               <h3 className="font-bold text-warm-900 text-lg">
-                {activeSession.title}
+                {displaySession.title}
               </h3>
               <p className="text-xs text-warm-500">
-                {activeSession.description}
+                {isReadOnly && displaySession.closed_at
+                  ? `Closed ${timeAgo(displaySession.closed_at)}`
+                  : displaySession.description}
               </p>
             </div>
           </div>
-          <Badge className="bg-ember-100 text-ember-700 border-ember-200 animate-pulse">
-            Live
+          <Badge className={isReadOnly
+            ? "bg-warm-100 text-warm-600 border-warm-200"
+            : "bg-ember-100 text-ember-700 border-ember-200 animate-pulse"
+          }>
+            {isReadOnly ? "Final Results" : "Live"}
           </Badge>
         </div>
 
-        {/* Points Budget */}
-        <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-white border border-warm-200">
+        {/* Points Budget — only for active votes */}
+        {!isReadOnly && <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-white border border-warm-200">
           <div className="flex items-center gap-2">
             <Flame className="w-4 h-4 text-ember-500" />
             <span className="text-sm font-medium text-warm-700">
@@ -125,10 +141,10 @@ export function VoteWidget() {
               left
             </span>
           </div>
-        </div>
+        </div>}
 
-        {/* Tabs: Vote / Results */}
-        <div className="flex gap-1 mb-4 p-1 bg-warm-100 rounded-lg">
+        {/* Tabs: Vote / Results — hide vote tab in read-only */}
+        {!isReadOnly && <div className="flex gap-1 mb-4 p-1 bg-warm-100 rounded-lg">
           <button
             onClick={() => setShowResults(false)}
             className={cn(
@@ -153,9 +169,9 @@ export function VoteWidget() {
             <Trophy className="w-3.5 h-3.5 inline mr-1.5" />
             Results
           </button>
-        </div>
+        </div>}
 
-        {!showResults ? (
+        {!isReadOnly && !showResults ? (
           /* VOTE VIEW */
           <div className="space-y-2">
             {challenges.length === 0 ? (
@@ -259,12 +275,12 @@ export function VoteWidget() {
         ) : (
           /* RESULTS VIEW */
           <div className="space-y-2">
-            {tallies.length === 0 ? (
+            {displayTallies.length === 0 ? (
               <p className="text-warm-500 text-sm text-center py-4">
                 No votes yet — be the first!
               </p>
             ) : (
-              tallies.map((t, i) => (
+              displayTallies.map((t, i) => (
                 <div
                   key={t.challenge_id}
                   className="flex items-center gap-3 p-3 rounded-lg bg-white border border-warm-200"
