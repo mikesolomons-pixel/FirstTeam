@@ -159,6 +159,27 @@ export interface VoteResult {
   rank: number;
 }
 
+export type BadgeCategory = "activity" | "peer";
+
+export interface BadgeDefinition {
+  key: string;
+  name: string;
+  description: string;
+  category: BadgeCategory;
+  icon: string; // lucide icon name
+  color: string; // tailwind color prefix e.g. "steel", "ember"
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_key: string;
+  awarded_by: string | null;
+  note: string | null;
+  created_at: string;
+  awarder?: Profile;
+}
+
 export interface AISummary {
   id: string;
   target_type: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Target,
@@ -12,6 +12,7 @@ import {
   Users,
   ArrowRight,
   Zap,
+  Award,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePresence } from "@/hooks/use-presence";
@@ -24,6 +25,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { VoteWidget } from "@/components/voting/vote-widget";
+import { useBadges } from "@/hooks/use-badges";
+import { BadgeRow } from "@/components/badges/badge-row";
 import { cn, timeAgo } from "@/lib/utils";
 import type { Profile } from "@/types";
 
@@ -44,7 +47,15 @@ function DashboardContent() {
   const { stories, loading: storiesLoading } = useStories();
   const { newsItems, loading: newsLoading } = useNews();
   const { sessions } = useBrainstorm();
+  const { badges: myBadges, checkAndGrantActivityBadges } = useBadges(user?.id);
   const onlineUsers = useAppStore((s) => s.onlineUsers);
+
+  // Auto-earn activity badges on dashboard load
+  useEffect(() => {
+    if (user && !authLoading) {
+      checkAndGrantActivityBadges();
+    }
+  }, [user, authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openChallengesCount = challenges.filter(
     (c) => c.status === "open"
@@ -224,7 +235,7 @@ function DashboardContent() {
       </div>
 
       {/* Stats Row */}
-      <div className="px-8 pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
+      <div className="px-8 pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-steel-400 to-steel-600" />
           <CardContent className="flex items-center gap-4 pt-5">
@@ -269,6 +280,23 @@ function DashboardContent() {
             </div>
           </CardContent>
         </Card>
+
+        <Link href="/achievements">
+          <Card className="relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-600" />
+            <CardContent className="flex items-center gap-4 pt-5">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Award className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-warm-900">
+                  {new Set(myBadges.map((b) => b.badge_key)).size}
+                </p>
+                <p className="text-xs text-warm-500 font-medium">Badges Earned</p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Vote Widget (when active) */}
