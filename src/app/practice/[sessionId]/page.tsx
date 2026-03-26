@@ -16,7 +16,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { usePractice } from "@/hooks/use-practice";
 import { useSpeech } from "@/hooks/use-speech";
-import { PRACTICE_ROLES, ROLE_MAP } from "@/lib/ai/roleplay";
+import { PRACTICE_ROLES, ROLE_MAP } from "@/lib/practice-roles";
 import { ChatMessage } from "@/components/practice/chat-message";
 import { MicButton, SpeakerToggle } from "@/components/practice/speech-button";
 import { Card, CardContent } from "@/components/ui/card";

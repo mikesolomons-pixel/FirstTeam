@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePractice } from "@/hooks/use-practice";
-import { PRACTICE_ROLES } from "@/lib/ai/roleplay";
+import { PRACTICE_ROLES } from "@/lib/practice-roles";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
