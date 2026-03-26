@@ -25,7 +25,6 @@ const NAV_LINKS = [
   { label: "Challenges", href: "/challenges", icon: Target },
   { label: "Stories", href: "/stories", icon: BookOpen },
   { label: "News", href: "/news", icon: Newspaper },
-  { label: "Brainstorm", href: "/brainstorm", icon: Lightbulb },
   { label: "Practice", href: "/practice", icon: MessageCircle },
   { label: "Achievements", href: "/achievements", icon: Award },
 ] as const;
