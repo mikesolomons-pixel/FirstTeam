@@ -252,3 +252,44 @@ export interface RoleDefinition {
   color: string;
   scenarios: ScenarioTemplate[];
 }
+
+// Challenge Ideas & Idea Voting
+export interface ChallengeIdea {
+  id: string;
+  challenge_id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+  comment_count?: number;
+}
+
+export interface IdeaVoteSession {
+  id: string;
+  challenge_id: string;
+  created_by: string | null;
+  title: string;
+  status: "active" | "closed";
+  show_on_challenge: boolean;
+  created_at: string;
+  closed_at: string | null;
+}
+
+export interface IdeaVote {
+  id: string;
+  session_id: string;
+  user_id: string;
+  idea_id: string;
+  points: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IdeaVoteTally {
+  idea_id: string;
+  title: string;
+  total_points: number;
+  voter_count: number;
+}
