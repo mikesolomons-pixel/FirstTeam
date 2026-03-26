@@ -293,3 +293,31 @@ export interface IdeaVoteTally {
   total_points: number;
   voter_count: number;
 }
+
+// Benchmarking
+export interface BenchmarkEntry {
+  id: string;
+  plant_name: string;
+  metric_key: string;
+  period: string;
+  value: number;
+  target: number | null;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+}
+
+export type BenchmarkCommentType = "uplift" | "downlift" | "general";
+
+export interface BenchmarkComment {
+  id: string;
+  plant_name: string;
+  metric_key: string;
+  period: string;
+  author_id: string;
+  body: string;
+  comment_type: BenchmarkCommentType;
+  created_at: string;
+  author?: Profile;
+}
