@@ -169,8 +169,29 @@ function DashboardContent() {
         </div>
       </div>
 
+      {/* Mission Banner */}
+      <div className="mx-8 mt-6 rounded-xl bg-gradient-to-r from-ember-500/10 via-forge-500/10 to-steel-500/10 border border-warm-200 px-6 py-5">
+        <p className="text-xs font-semibold uppercase tracking-widest text-ember-600 mb-1">Our Mission</p>
+        <h2 className="text-lg font-bold text-warm-900 leading-snug">
+          Zero harm. 90%+ OEE across every plant. Best-in-class delivery. One team driving world-class manufacturing — together.
+        </h2>
+        <div className="flex flex-wrap gap-3 mt-3">
+          {[
+            { label: "Zero Recordable Injuries", color: "bg-emerald-100 text-emerald-700" },
+            { label: "90% OEE", color: "bg-steel-100 text-steel-700" },
+            { label: "97% On-Time Delivery", color: "bg-forge-100 text-forge-700" },
+            { label: "<5% Forecast Variance", color: "bg-ember-100 text-ember-700" },
+            { label: "98% First Pass Yield", color: "bg-steel-100 text-steel-700" },
+          ].map((t) => (
+            <span key={t.label} className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${t.color}`}>
+              {t.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Quick Actions */}
-      <div className="px-8 pt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
+      <div className="px-8 pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
         <Link href="/challenges">
           <Card
             hover
