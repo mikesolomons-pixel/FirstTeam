@@ -31,9 +31,10 @@ export default function TutorialPage() {
   const router = useRouter();
 
   const startTour = () => {
-    // Clear tour state so it restarts
-    localStorage.removeItem("first-team-tutorial-done");
-    localStorage.removeItem("first-team-tutorial-step");
+    // Clear all tutorial state so it restarts from intro
+    localStorage.removeItem("first-team-intro-done");
+    localStorage.removeItem("first-team-tour-done");
+    localStorage.removeItem("first-team-tour-step");
     router.push("/");
   };
 
