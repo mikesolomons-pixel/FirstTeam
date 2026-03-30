@@ -16,6 +16,7 @@ import {
   MessageCircle,
   BarChart3,
   ClipboardList,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -31,6 +32,7 @@ const NAV_LINKS = [
   { label: "Site Plan", href: "/site-plan", icon: ClipboardList },
   { label: "Benchmarking", href: "/benchmarking", icon: BarChart3 },
   { label: "Achievements", href: "/achievements", icon: Award },
+  { label: "Tutorial", href: "/tutorial", icon: GraduationCap },
 ] as const;
 
 export function Sidebar() {
