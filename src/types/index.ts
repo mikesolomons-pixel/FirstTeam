@@ -321,3 +321,33 @@ export interface BenchmarkComment {
   created_at: string;
   author?: Profile;
 }
+
+// Site Master Plan
+export type GoalStatus = "on_track" | "at_risk" | "behind" | "achieved";
+export type UpdateType = "progress" | "learning" | "blocker";
+
+export interface SitePlanGoal {
+  id: string;
+  plant_name: string;
+  title: string;
+  category: string;
+  target_value: string;
+  current_value: string;
+  status: GoalStatus;
+  priority: number;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+  updates?: SitePlanUpdate[];
+}
+
+export interface SitePlanUpdate {
+  id: string;
+  goal_id: string;
+  author_id: string;
+  body: string;
+  update_type: UpdateType;
+  created_at: string;
+  author?: Profile;
+}

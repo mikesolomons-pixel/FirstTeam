@@ -15,6 +15,7 @@ import {
   Award,
   MessageCircle,
   BarChart3,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -27,6 +28,7 @@ const NAV_LINKS = [
   { label: "Stories", href: "/stories", icon: BookOpen },
   { label: "News", href: "/news", icon: Newspaper },
   { label: "Practice", href: "/practice", icon: MessageCircle },
+  { label: "Site Plan", href: "/site-plan", icon: ClipboardList },
   { label: "Benchmarking", href: "/benchmarking", icon: BarChart3 },
   { label: "Achievements", href: "/achievements", icon: Award },
 ] as const;
